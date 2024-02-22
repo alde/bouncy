@@ -73,9 +73,9 @@ fn setup(
         .insert(Collider::ball(0.5))
         .insert(KinematicCharacterController::default());
 
-    commands.spawn(PlatformBundle::create(-100.0, Vec3::new(75.0, 200.0, 1.0)));
-    commands.spawn(PlatformBundle::create(100.0, Vec3::new(50.0, 350.0, 1.0)));
-    commands.spawn(PlatformBundle::create(350.0, Vec3::new(150.0, 250.0, 1.0)));
+    commands.spawn(Platform::create(-100.0, 200.0, Vec3::new(75.0, 20.0, 1.0)));
+    commands.spawn(Platform::create(100.0, 550.0, Vec3::new(100.0, 20.0, 1.0)));
+    commands.spawn(Platform::create(50.0, 350.0, Vec3::new(150.0, 20.0, 1.0)));
 
     commands
         .spawn(SpriteBundle {
@@ -95,13 +95,13 @@ fn setup(
 }
 
 #[derive(Bundle)]
-struct PlatformBundle {
+struct Platform {
     sprite: SpriteBundle,
     rigid_body: RigidBody,
     collider: Collider,
 }
-impl PlatformBundle {
-    fn create(x: f32, scale: Vec3) -> Self {
+impl Platform {
+    fn create(x: f32, y: f32, scale: Vec3) -> Self {
         Self {
             sprite: SpriteBundle {
                 sprite: Sprite {
@@ -109,11 +109,7 @@ impl PlatformBundle {
                     ..Default::default()
                 },
                 transform: Transform {
-                    translation: Vec3::new(
-                        x,
-                        WINDOW_BOTTOM_Y + FLOOR_THICKNESS + (scale.y / 2.0),
-                        0.0,
-                    ),
+                    translation: Vec3::new(x, WINDOW_BOTTOM_Y + FLOOR_THICKNESS + y, 0.0),
                     scale,
                     ..Default::default()
                 },

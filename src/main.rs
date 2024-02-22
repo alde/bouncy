@@ -143,11 +143,8 @@ fn jump(
 
     let (player, output) = query.single();
 
-    match input.get_pressed().next() {
-        Some(KeyCode::ArrowUp) if output.grounded => {
-            commands.entity(player).insert(Jump(0.0));
-        }
-        _ => {}
+    if input.just_pressed(KeyCode::Space) && output.grounded {
+        commands.entity(player).insert(Jump(0.0));
     }
 }
 
@@ -159,14 +156,11 @@ fn movement(
     let mut player = query.single_mut();
     let mut movement = 0.0;
 
-    match input.get_pressed().next() {
-        Some(KeyCode::ArrowRight) => {
-            movement += time.delta_seconds() * PLAYER_VELOCITY_X;
-        }
-        Some(KeyCode::ArrowLeft) => {
-            movement += time.delta_seconds() * PLAYER_VELOCITY_X * -1.0;
-        }
-        _ => {}
+    if input.pressed(KeyCode::ArrowRight) {
+        movement += time.delta_seconds() * PLAYER_VELOCITY_X;
+    }
+    if input.pressed(KeyCode::ArrowLeft) {
+        movement += time.delta_seconds() * PLAYER_VELOCITY_X * -1.0;
     }
 
     match player.translation {

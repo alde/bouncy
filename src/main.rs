@@ -1,7 +1,7 @@
 use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
 use bevy_math::primitives;
 use bevy_rapier2d::{
-    control::KinematicCharacterController,
+    control::{KinematicCharacterController, KinematicCharacterControllerOutput},
     dynamics::RigidBody,
     geometry::Collider,
     prelude::{NoUserData, RapierDebugRenderPlugin, RapierPhysicsPlugin},
@@ -132,16 +132,19 @@ struct Jump(f32);
 fn jump(
     input: Res<ButtonInput<KeyCode>>,
     mut commands: Commands,
-    query: Query<Entity, (With<KinematicCharacterController>, Without<Jump>)>,
+    query: Query<
+        (Entity, &KinematicCharacterControllerOutput),
+        (With<KinematicCharacterController>, Without<Jump>),
+    >,
 ) {
     if query.is_empty() {
         return;
     }
 
-    let player = query.single();
+    let (player, output) = query.single();
 
-    match input.get_pressed().last() {
-        Some(KeyCode::ArrowUp) => {
+    match input.get_pressed().next() {
+        Some(KeyCode::ArrowUp) if output.grounded => {
             commands.entity(player).insert(Jump(0.0));
         }
         _ => {}
@@ -156,7 +159,7 @@ fn movement(
     let mut player = query.single_mut();
     let mut movement = 0.0;
 
-    match input.get_pressed().last() {
+    match input.get_pressed().next() {
         Some(KeyCode::ArrowRight) => {
             movement += time.delta_seconds() * PLAYER_VELOCITY_X;
         }
